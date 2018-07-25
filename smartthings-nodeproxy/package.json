@@ -1,9 +1,8 @@
 {
-  "author": "redloro@gmail.com",
-  "name": "smartthings-nodeproxy",
+  "author": "andyvt@babgvant.com",
+  "name": "http-nodeproxy",
   "version": "1.0.0",
-  "description": "SmartThings Node Proxy",
-  "repository": "redloro/smartthings",
+  "description": "HTTP Node Proxy",
   "license": "ISC",
   "engines": {
     "node": ">=6.0.0"
