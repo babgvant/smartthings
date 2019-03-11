@@ -144,6 +144,7 @@ function Envisalink () {
   var device = null;
   var deviceRequest = null;
   var deviceResponse = null;
+  var lastUpdate = 0;
   var responseHandler = function() {};
   var requestHandler = function(a, b, c) {
     deviceRequest = a;
@@ -161,8 +162,13 @@ function Envisalink () {
         return;
     }
 
-    if (device && device.writable) { return; }
+    let n = new Date() - lastUpdate;
+    // logger(n);
+
+    if (device && device.writable && n < nconf.get('envisalink:checkInterval')*1000) { return; }
     if (device) { device.destroy(); }
+
+    logger('Initialize Envisalink connection.');
 
     device = new net.Socket();
     device.on('error', function(err) {
@@ -189,7 +195,10 @@ function Envisalink () {
   };
 
   // check connection every 60 secs
-  setInterval(function() { self.init(); }, 60*1000);
+  setInterval(function() { 
+    // logger('check');
+    self.init(); 
+  }, nconf.get('envisalink:checkInterval')*1000);
 
   // experimental: dump zone timers
   var zoneTimer = (nconf.get('envisalink:dumpZoneTimer')) ? parseInt(nconf.get('envisalink:dumpZoneTimer')) : 0;
@@ -270,7 +279,8 @@ function Envisalink () {
   }
 
   function keypad_update(data) {
-    //logger('Execute keypad_update: '+data);
+    // logger('Execute keypad_update: '+data);
+    lastUpdate = new Date();
 
     var map = data.split(',');
     if (map.length != 5 || data.indexOf('%') != -1) {
